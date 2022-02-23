@@ -1,0 +1,13 @@
+mutation {
+  createTransfer(
+    input: { transaction: "OxTransaction", sender: "OxSender", receiver: "OxReceiver", token_id: 101, read:false }
+  ) {
+    transaction
+    sender
+    receiver
+    read
+    token_id
+  }
+}
+
+
