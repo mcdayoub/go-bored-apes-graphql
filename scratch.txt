@@ -11,3 +11,13 @@ mutation {
 }
 
 
+
+mutation {
+  readTransfer(transaction: "0xTransaction") {
+    transaction
+    sender
+    receiver
+    read
+    token_id
+  }
+}

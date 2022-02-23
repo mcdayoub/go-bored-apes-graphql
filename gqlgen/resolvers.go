@@ -27,7 +27,11 @@ func (r *mutationResolver) CreateTransfer(ctx context.Context, input TranferInpu
 }
 
 func (r *mutationResolver) ReadTransfer(ctx context.Context, transaction string) (*pg.Transfer, error) {
-	panic("not implemented")
+	transfer, err := r.Repository.ReadTransfer(ctx, transaction)
+	if err != nil {
+		return nil, err
+	}
+	return transfer, nil
 }
 
 func (r *queryResolver) TransferByTransaction(ctx context.Context, transaction string) (*pg.Transfer, error) {
