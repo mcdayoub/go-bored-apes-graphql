@@ -6,7 +6,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/mcdayoub/go-bored-apes-graphql/pg"
+	"github.com/mcdayoub/go-bored-apes-graphql/graphql/pg"
 )
 
 type Resolver struct {

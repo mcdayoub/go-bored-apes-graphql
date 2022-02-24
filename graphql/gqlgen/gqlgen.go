@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/99designs/gqlgen/handler"
-	"github.com/mcdayoub/go-bored-apes-graphql/pg" // update the username
+	"github.com/mcdayoub/go-bored-apes-graphql/graphql/pg" // update the username
 )
 
 // NewHandler returns a new graphql endpoint handler.

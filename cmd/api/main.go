@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/mcdayoub/go-bored-apes-graphql/gqlgen"
+	"github.com/mcdayoub/go-bored-apes-graphql/graphql/gqlgen"
+	"github.com/mcdayoub/go-bored-apes-graphql/graphql/pg"
 	"github.com/mcdayoub/go-bored-apes-graphql/models"
-	"github.com/mcdayoub/go-bored-apes-graphql/pg"
 	"github.com/mcdayoub/go-bored-apes-graphql/pkg/listener"
 	"github.com/mcdayoub/go-bored-apes-graphql/pkg/writer"
 	"github.com/sirupsen/logrus"
