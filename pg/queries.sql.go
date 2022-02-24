@@ -40,24 +40,6 @@ func (q *Queries) CreateTransfer(ctx context.Context, arg CreateTransferParams) 
 	return i, err
 }
 
-const getTransferByTransaction = `-- name: GetTransferByTransaction :one
-SELECT transaction, sender, receiver, token_id, read FROM transfers
-WHERE transaction = $1
-`
-
-func (q *Queries) GetTransferByTransaction(ctx context.Context, transaction string) (Transfer, error) {
-	row := q.db.QueryRowContext(ctx, getTransferByTransaction, transaction)
-	var i Transfer
-	err := row.Scan(
-		&i.Transaction,
-		&i.Sender,
-		&i.Receiver,
-		&i.TokenID,
-		&i.Read,
-	)
-	return i, err
-}
-
 const listTransfersByReceiver = `-- name: ListTransfersByReceiver :many
 SELECT transaction, sender, receiver, token_id, read FROM transfers
 WHERE receiver = $1
@@ -133,6 +115,40 @@ WHERE token_id = $1
 
 func (q *Queries) ListTransfersByTokenID(ctx context.Context, tokenID int32) ([]Transfer, error) {
 	rows, err := q.db.QueryContext(ctx, listTransfersByTokenID, tokenID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Transfer
+	for rows.Next() {
+		var i Transfer
+		if err := rows.Scan(
+			&i.Transaction,
+			&i.Sender,
+			&i.Receiver,
+			&i.TokenID,
+			&i.Read,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTransfersByTransaction = `-- name: ListTransfersByTransaction :many
+SELECT transaction, sender, receiver, token_id, read FROM transfers
+WHERE transaction = $1
+`
+
+func (q *Queries) ListTransfersByTransaction(ctx context.Context, transaction string) ([]Transfer, error) {
+	rows, err := q.db.QueryContext(ctx, listTransfersByTransaction, transaction)
 	if err != nil {
 		return nil, err
 	}

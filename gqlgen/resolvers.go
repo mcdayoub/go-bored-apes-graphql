@@ -4,6 +4,7 @@ package gqlgen
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/mcdayoub/go-bored-apes-graphql/pg"
 )
@@ -34,28 +35,48 @@ func (r *mutationResolver) ReadTransfer(ctx context.Context, transaction string)
 	return transfer, nil
 }
 
-func (r *queryResolver) TransferByTransaction(ctx context.Context, transaction string) (*pg.Transfer, error) {
-	transfer, err := r.Repository.GetTransferByTransaction(ctx, transaction)
+func (r *queryResolver) TransfersByTransaction(ctx context.Context, transaction string) ([]pg.Transfer, error) {
+	transfers, err := r.Repository.ListTransfersByTransaction(ctx, transaction)
 	if err != nil {
 		return nil, err
 	}
-	return &transfer, nil
+	return transfers, nil
 }
 
 func (r *queryResolver) TransfersBySender(ctx context.Context, sender string) ([]pg.Transfer, error) {
-	panic("not implemented")
+	transfers, err := r.Repository.ListTransfersBySender(ctx, sender)
+	if err != nil {
+		return nil, err
+	}
+	return transfers, nil
 }
 
 func (r *queryResolver) TransfersByReceiver(ctx context.Context, receiver string) ([]pg.Transfer, error) {
-	panic("not implemented")
+	transfers, err := r.Repository.ListTransfersByReceiver(ctx, receiver)
+	if err != nil {
+		return nil, err
+	}
+	return transfers, nil
 }
 
 func (r *queryResolver) TransfersByTokenID(ctx context.Context, tokenID string) ([]pg.Transfer, error) {
-	panic("not implemented")
+	t, err := strconv.Atoi(tokenID)
+	if err != nil {
+		return nil, err
+	}
+	transfers, err := r.Repository.ListTransfersByTokenID(ctx, int32(t))
+	if err != nil {
+		return nil, err
+	}
+	return transfers, nil
 }
 
 func (r *queryResolver) UnreadTransfers(ctx context.Context) ([]pg.Transfer, error) {
-	panic("not implemented")
+	transfers, err := r.Repository.ListUnreadTransfers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return transfers, nil
 }
 
 // Mutation returns MutationResolver implementation.

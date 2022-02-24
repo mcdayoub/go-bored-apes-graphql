@@ -1,4 +1,4 @@
--- name: GetTransferByTransaction :one
+-- name: ListTransfersByTransaction :many
 SELECT * FROM transfers
 WHERE transaction = $1;
 

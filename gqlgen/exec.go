@@ -49,11 +49,11 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		TransferByTransaction func(childComplexity int, transaction string) int
-		TransfersByReceiver   func(childComplexity int, receiver string) int
-		TransfersBySender     func(childComplexity int, sender string) int
-		TransfersByTokenID    func(childComplexity int, tokenID string) int
-		UnreadTransfers       func(childComplexity int) int
+		TransfersByReceiver    func(childComplexity int, receiver string) int
+		TransfersBySender      func(childComplexity int, sender string) int
+		TransfersByTokenID     func(childComplexity int, tokenID string) int
+		TransfersByTransaction func(childComplexity int, transaction string) int
+		UnreadTransfers        func(childComplexity int) int
 	}
 
 	Transfer struct {
@@ -70,7 +70,7 @@ type MutationResolver interface {
 	ReadTransfer(ctx context.Context, transaction string) (*pg.Transfer, error)
 }
 type QueryResolver interface {
-	TransferByTransaction(ctx context.Context, transaction string) (*pg.Transfer, error)
+	TransfersByTransaction(ctx context.Context, transaction string) ([]pg.Transfer, error)
 	TransfersBySender(ctx context.Context, sender string) ([]pg.Transfer, error)
 	TransfersByReceiver(ctx context.Context, receiver string) ([]pg.Transfer, error)
 	TransfersByTokenID(ctx context.Context, tokenID string) ([]pg.Transfer, error)
@@ -116,18 +116,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ReadTransfer(childComplexity, args["transaction"].(string)), true
 
-	case "Query.transferByTransaction":
-		if e.complexity.Query.TransferByTransaction == nil {
-			break
-		}
-
-		args, err := ec.field_Query_transferByTransaction_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.TransferByTransaction(childComplexity, args["transaction"].(string)), true
-
 	case "Query.transfersByReceiver":
 		if e.complexity.Query.TransfersByReceiver == nil {
 			break
@@ -163,6 +151,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.TransfersByTokenID(childComplexity, args["token_id"].(string)), true
+
+	case "Query.transfersByTransaction":
+		if e.complexity.Query.TransfersByTransaction == nil {
+			break
+		}
+
+		args, err := ec.field_Query_transfersByTransaction_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TransfersByTransaction(childComplexity, args["transaction"].(string)), true
 
 	case "Query.unreadTransfers":
 		if e.complexity.Query.UnreadTransfers == nil {
@@ -279,7 +279,7 @@ var sources = []*ast.Source{
 }
 
 type Query {
-  transferByTransaction(transaction: String!): Transfer
+  transfersByTransaction(transaction: String!): [Transfer!]!
   transfersBySender(sender: String!): [Transfer!]!
   transfersByReceiver(receiver: String!): [Transfer!]!
   transfersByTokenID(token_id: String!): [Transfer!]!
@@ -351,21 +351,6 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_transferByTransaction_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["transaction"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transaction"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["transaction"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_transfersByReceiver_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -408,6 +393,21 @@ func (ec *executionContext) field_Query_transfersByTokenID_args(ctx context.Cont
 		}
 	}
 	args["token_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_transfersByTransaction_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["transaction"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transaction"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["transaction"] = arg0
 	return args, nil
 }
 
@@ -533,7 +533,7 @@ func (ec *executionContext) _Mutation_readTransfer(ctx context.Context, field gr
 	return ec.marshalNTransfer2ᚖgithubᚗcomᚋmcdayoubᚋgoᚑboredᚑapesᚑgraphqlᚋpgᚐTransfer(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_transferByTransaction(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_transfersByTransaction(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -550,7 +550,7 @@ func (ec *executionContext) _Query_transferByTransaction(ctx context.Context, fi
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_transferByTransaction_args(ctx, rawArgs)
+	args, err := ec.field_Query_transfersByTransaction_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -558,18 +558,21 @@ func (ec *executionContext) _Query_transferByTransaction(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TransferByTransaction(rctx, args["transaction"].(string))
+		return ec.resolvers.Query().TransfersByTransaction(rctx, args["transaction"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*pg.Transfer)
+	res := resTmp.([]pg.Transfer)
 	fc.Result = res
-	return ec.marshalOTransfer2ᚖgithubᚗcomᚋmcdayoubᚋgoᚑboredᚑapesᚑgraphqlᚋpgᚐTransfer(ctx, field.Selections, res)
+	return ec.marshalNTransfer2ᚕgithubᚗcomᚋmcdayoubᚋgoᚑboredᚑapesᚑgraphqlᚋpgᚐTransferᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_transfersBySender(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2233,7 +2236,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "transferByTransaction":
+		case "transfersByTransaction":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -2242,7 +2245,10 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_transferByTransaction(ctx, field)
+				res = ec._Query_transfersByTransaction(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -3276,13 +3282,6 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOTransfer2ᚖgithubᚗcomᚋmcdayoubᚋgoᚑboredᚑapesᚑgraphqlᚋpgᚐTransfer(ctx context.Context, sel ast.SelectionSet, v *pg.Transfer) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Transfer(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

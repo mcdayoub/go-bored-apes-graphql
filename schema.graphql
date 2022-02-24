@@ -7,7 +7,7 @@ type Transfer {
 }
 
 type Query {
-  transferByTransaction(transaction: String!): Transfer
+  transfersByTransaction(transaction: String!): [Transfer!]!
   transfersBySender(sender: String!): [Transfer!]!
   transfersByReceiver(receiver: String!): [Transfer!]!
   transfersByTokenID(token_id: String!): [Transfer!]!

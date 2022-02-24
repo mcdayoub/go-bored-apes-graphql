@@ -11,7 +11,7 @@ import (
 // Repository is the application's data layer functionality.
 type Repository interface {
 	// transfer queries
-	GetTransferByTransaction(ctx context.Context, transaction string) (Transfer, error)
+	ListTransfersByTransaction(ctx context.Context, transaction string) ([]Transfer, error)
 	ListTransfersBySender(ctx context.Context, sender string) ([]Transfer, error)
 	ListTransfersByReceiver(ctx context.Context, receiver string) ([]Transfer, error)
 	ListTransfersByTokenID(ctx context.Context, tokenID int32) ([]Transfer, error)
