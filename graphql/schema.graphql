@@ -1,0 +1,28 @@
+type Transfer {
+  transaction: String!
+  sender: String!
+  receiver: String!
+  token_id: Int!
+  read: Boolean!
+}
+
+type Query {
+  transfersByTransaction(transaction: String!): [Transfer!]!
+  transfersBySender(sender: String!): [Transfer!]!
+  transfersByReceiver(receiver: String!): [Transfer!]!
+  transfersByTokenID(token_id: String!): [Transfer!]!
+  unreadTransfers: [Transfer!]!
+}
+
+input TranferInput {
+  transaction: String!
+  sender: String!
+  receiver: String!
+  token_id: Int!
+  read: Boolean!
+}
+
+type Mutation {
+  createTransfer(input: TranferInput!): Transfer!
+  readTransfer(transaction: String!): Transfer!
+}
