@@ -72,7 +72,7 @@ mutation {
 * This blog post for a quick briefing on how to gen a lot of the GraphQL + Postgres code https://w11i.me/graphql-server-go-part1
 
 
-### Takeaways (If this were in prod I would instead...)
+### Takeaways (If this were in prod I would instead do...)
 * I looked into ent: https://entgo.io/ and it seems suitable for building large apps, but not suitable for this small project.
 * The postgres setup could be done better with `docker-compose`
 * There are a lot of hard coded values that would live better as a kube secret or an environment variable.
