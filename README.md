@@ -20,6 +20,7 @@ https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
 
 If you'd like to run the app yourself with Go, make sure to have go 1.17 installed.
 You can find downloads here: https://go.dev/dl/
+* Run `go run cmd/api/main.go` from the root of this directory
 
 ### GraphQL Playground
 In the playground you can find the queries and mutations used to:
