@@ -108,7 +108,7 @@ func (listener *Listener) HandleLogs(logs []*types.Log) {
 			t := toTransferData(logs[i].Topics, logs[i].TxHash)
 
 			// Helpful log to see that the listener has found a BAYC transfer
-			logrus.Info(t)
+			logrus.Info("Listener found Transfer: ", t)
 
 			// Drop the transfer object into the send channel
 			*listener.Send <- t
@@ -117,9 +117,9 @@ func (listener *Listener) HandleLogs(logs []*types.Log) {
 		// Approval logs are useful for the sanity check that the listener is listening
 		// During development, BAYC methods were mostly this type
 		// For now these events are just logged
-		if logs[i].Topics[0].Hex() == models.APPROVAL {
+		if logs[i].Topics[0].Hex() == models.Approval {
 			t := toApprovalData(logs[i].Topics)
-			logrus.Info(t)
+			logrus.Info("Listener found Approval: ", t)
 		}
 	}
 }
@@ -150,7 +150,7 @@ func toApprovalData(topics []common.Hash) models.ApprovalForAllData {
 	return approvalData
 }
 
-// This could be used to get transfers from a range of blocks
+// PrintTopics could be used to get transfers from a range of blocks
 // Useful in case you need to get data from past blocks
 func (listener *Listener) PrintTopics(fromBlock, toBlock *big.Int) {
 	query := ethereum.FilterQuery{

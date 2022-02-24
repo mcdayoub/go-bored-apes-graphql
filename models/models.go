@@ -25,4 +25,4 @@ type ApprovalForAllData struct {
 }
 
 // Approval hex is just for the purposes of testing
-var APPROVAL = "0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31"
+var Approval = "0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31"

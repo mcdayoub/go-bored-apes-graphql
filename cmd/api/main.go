@@ -16,9 +16,15 @@ import (
 )
 
 var (
-	INFURA_ADDRESS             = "wss://mainnet.infura.io/ws/v3/839ce6a2eea246478820734c7b1a979a"
-	BORED_APE_CONTRACT_ADDRESS = "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D"
-	TRANSFER                   = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+	// InfuraURL is how we get data from the ethereum network
+	// If this was code in prod I would keep the infura project id hidden
+	InfuraURL = "wss://mainnet.infura.io/ws/v3/839ce6a2eea246478820734c7b1a979a"
+
+	// BoredApeContractAddress to track the BAYC transactions
+	BoredApeContractAddress = "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D"
+
+	// TransferHex for ethereum transfers
+	TransferHex = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 )
 
 func run() error {
@@ -60,7 +66,7 @@ func run() error {
 
 		// Here we set the attributes for the listener.
 		// These are meant to be configurable in case we want to have a listener for different events and contracts.
-		listener := listener.NewListener(INFURA_ADDRESS, BORED_APE_CONTRACT_ADDRESS, TRANSFER, &transfers)
+		listener := listener.NewListener(InfuraURL, BoredApeContractAddress, TransferHex, &transfers)
 		err := listener.Listen()
 
 		return err
