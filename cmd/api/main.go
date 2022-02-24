@@ -35,6 +35,7 @@ func run() error {
 	// Run the API in a tomb
 	tomb.Go(func() error {
 		// initialize the db
+		// This is hard coded but in prod it would be better to derive this with a config file.
 		db, err := pg.Open("dbname=transfers sslmode=disable")
 		if err != nil {
 			panic(err)
