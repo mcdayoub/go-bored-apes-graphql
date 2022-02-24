@@ -6,11 +6,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/mcdayoub/go-bored-apes-graphql/models"
 	"github.com/sirupsen/logrus"
 )
 
+// Writer has the responsibility to write to the graphQL server
 type Writer struct {
 	Receive *chan models.TransferData
 }
@@ -26,17 +28,21 @@ func NewWriter(receive *chan models.TransferData) Writer {
 // and write to the GraphQL server.
 func (writer *Writer) Start() error {
 	for transferData := range *writer.Receive {
-		tokenID, err := strconv.Atoi(transferData.TokenID)
+		// This skips the middle chars of the sender and receiver
+		decodedSender := "0x" + transferData.Sender[26:]
+		decodedReceiver := "0x" + transferData.Receiver[26:]
+
+		// This gives us the TokenID in decimal form
+		decodedTokenID, err := strconv.ParseInt(hexaNumberToInteger(transferData.TokenID), 16, 64)
 		if err != nil {
-			logrus.Error(err)
-			return err
+			fmt.Println(err)
 		}
 
 		transferInput := models.TransferInput{
 			Transaction: transferData.Transaction,
-			Sender:      transferData.Sender,
-			Receiver:    transferData.Sender,
-			TokenID:     tokenID,
+			Sender:      decodedSender,
+			Receiver:    decodedReceiver,
+			TokenID:     int(decodedTokenID),
 		}
 
 		write(transferInput)
@@ -44,8 +50,16 @@ func (writer *Writer) Start() error {
 	return nil
 }
 
+// hexaNumberToInteger converts a hex to a dec
+func hexaNumberToInteger(hexaString string) string {
+	// replace 0x or 0X with empty String
+	numberStr := strings.Replace(hexaString, "0x", "", -1)
+	numberStr = strings.Replace(numberStr, "0X", "", -1)
+	return numberStr
+}
+
 // write creates the graphQL query to write to the server.
-func write(transfer models.TransferInput) {
+func write(transfer models.TransferInput) error {
 	// Post to the graphQL URL
 	url := "http://localhost:8080/query"
 
@@ -72,7 +86,7 @@ func write(transfer models.TransferInput) {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
 		logrus.Error(err)
-		return
+		return err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -80,7 +94,7 @@ func write(transfer models.TransferInput) {
 	resp, err := client.Do(req)
 	if err != nil {
 		logrus.Error(err)
-		return
+		return err
 	}
 	defer resp.Body.Close()
 
@@ -89,4 +103,6 @@ func write(transfer models.TransferInput) {
 	logrus.Info("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
 	logrus.Info("response Body:", string(body))
+
+	return nil
 }
