@@ -150,9 +150,9 @@ func toApprovalData(topics []common.Hash) models.ApprovalForAllData {
 	return approvalData
 }
 
-// PrintTopics could be used to get transfers from a range of blocks
+// PastBlocks could be used to get transfers from a range of blocks
 // Useful in case you need to get data from past blocks
-func (listener *Listener) PrintTopics(fromBlock, toBlock *big.Int) {
+func (listener *Listener) PastBlocks(fromBlock, toBlock *big.Int) {
 	query := ethereum.FilterQuery{
 		FromBlock: big.NewInt(fromBlock.Int64()),
 		ToBlock:   big.NewInt(toBlock.Int64()),
