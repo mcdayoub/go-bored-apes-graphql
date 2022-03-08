@@ -28,7 +28,6 @@ var (
 )
 
 func run() error {
-
 	// Initialize tomb. This handles clean goroutine tracking and termination.
 	tomb := &tombv2.Tomb{}
 
