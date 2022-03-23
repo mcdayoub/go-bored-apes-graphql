@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,10 +16,9 @@ import (
 	tombv2 "gopkg.in/tomb.v2"
 )
 
-var (
-	// InfuraURL is how we get data from the ethereum network
-	// If this was code in prod I would keep the infura project id hidden
-	InfuraURL = "wss://mainnet.infura.io/ws/v3/839ce6a2eea246478820734c7b1a979a"
+const (
+	// infuraURL is how we get data from the ethereum network
+	infuraURL = "wss://mainnet.infura.io/ws/v3/"
 
 	// BoredApeContractAddress to track the BAYC transactions
 	BoredApeContractAddress = "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D"
@@ -27,7 +27,7 @@ var (
 	TransferHex = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 )
 
-func run() error {
+func run(infuraKey string) error {
 	// Initialize tomb. This handles clean goroutine tracking and termination.
 	tomb := &tombv2.Tomb{}
 
@@ -64,9 +64,12 @@ func run() error {
 	tomb.Go(func() error {
 		logrus.Info("Starting Listener")
 
+		// Combine the infuraURL and the infuraKey that was inputted when running the app.
+		infuraURLAndKey := infuraURL + infuraKey
+
 		// Here we set the attributes for the listener.
 		// These are meant to be configurable in case we want to have a listener for different events and contracts.
-		listener := listener.NewListener(InfuraURL, BoredApeContractAddress, TransferHex, &transfers)
+		listener := listener.NewListener(infuraURLAndKey, BoredApeContractAddress, TransferHex, &transfers)
 		err := listener.Listen()
 
 		return err
@@ -86,7 +89,11 @@ func run() error {
 }
 
 func main() {
-	if err := run(); err != nil {
+	// infuraKey is the project id key from your infura account
+	infuraKey := flag.String("key", "", "the infura project id")
+	flag.Parse()
+
+	if err := run(*infuraKey); err != nil {
 		log.Fatal(err)
 	}
 }
