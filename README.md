@@ -10,17 +10,17 @@ https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
 ### Prereqs to running the app
 * Clone this repo
 * Download postgres. On mac I use https://postgresapp.com/
+* Go to https://infura.io/ and get set up with a project id
 
 ### Running the app
-* Create the db: in the terminal run `createdb transfers`
+* Create the postgres db: in the terminal run `createdb transfers`
 * From the `/graphql` directory run `psql -d transfers -a -f schema.sql`
-* Run `./api` from the root of this directory
+* Run `./api -key={YOUR_INFURA_PROJECT_ID}` from the root of this directory
 * Go to `http://localhost:8080` to play in the GraphQL playground
 * Wait for some BAYC transactions to happen
 
 If you'd like to run the app yourself with Go, make sure to have go 1.17 installed.
 You can find downloads here: https://go.dev/dl/
-* Run `go run cmd/api/main.go` from the root of this directory
 
 ### GraphQL Playground
 In the playground you can find the queries and mutations used to:
