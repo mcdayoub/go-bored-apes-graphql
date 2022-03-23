@@ -2,7 +2,7 @@
 
 ### Go / GraphQL / Bored Ape Yacht Club
 
-This is a GraphQL server written in Go that listens to the ethereum transfer events for Bored Ape Yacht Club (BAYC).
+This is a GraphQL server written in Go that listens to the Ethereum transfer events for Bored Ape Yacht Club (BAYC).
 
 These events are found at:
 https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
@@ -17,7 +17,7 @@ https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
 * From the `/graphql` directory run `psql -d transfers -a -f schema.sql`
 * Run `./api -key={YOUR_INFURA_PROJECT_ID}` from the root of this directory
 * Go to `http://localhost:8080` to play in the GraphQL playground
-* Wait for some BAYC transactions to happen
+* Wait for some BAYC transactions to happen. Hopefully they weren't phished.
 
 If you'd like to run the app yourself with Go, make sure to have go 1.17 installed.
 You can find downloads here: https://go.dev/dl/
