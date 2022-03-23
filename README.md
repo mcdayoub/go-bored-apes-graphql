@@ -1,4 +1,4 @@
-# go-bored-apes-graqphql
+# go-bored-apes-graphql
 
 ### Go / GraphQL / Bored Ape Yacht Club
 
